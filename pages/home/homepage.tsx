@@ -9,6 +9,7 @@ import { Job } from "@/libs/types/job";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import LanguageSwitcher from "@/libs/components/Language/LangSwitcher";
+import translateText from "../api/translate";
 
 
 // Simulated API call to fetch jobs
@@ -31,7 +32,7 @@ export default function Home(props: HomePageProps) {
   const { ref, inView } = useInView();
   const [isChecked, setIsChecked] = useState(false);
   const [translatedContent, setTranslatedContent] = useState(props.content);
-	
+	const [targetLang, setTargetLang] = useState('en'); // Default language is English
   /** LIFECYCLE **/
 
 	useEffect(() => {
@@ -83,14 +84,16 @@ export default function Home(props: HomePageProps) {
   };
   const [content, setContent] = useState('Welcome to my website');
 
-  const handleTranslate = async (targetLang: string) => {
+  const handleTranslate = async (lang: string) => {
+    setTargetLang(lang); // Update the target language
+
     try {
       const res = await fetch('/api/translate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: content, targetLang }),
+        body: JSON.stringify({ text: 'Welcome to my website', targetLang: lang }),
       });
 
       if (!res.ok) {
@@ -103,6 +106,21 @@ export default function Home(props: HomePageProps) {
       console.error(error);
       setTranslatedContent('Error occurred while translating');
     }
+    
+    // Translate job data
+    const translatedJobs = await Promise.all(
+      jobs.map(async (job) => {
+        const translatedTitle = await translateText(job.i18nTitle.EN_US, lang);
+        const translatedDescription = await translateText(job.i18nDescription.EN_US, lang);
+        return {
+          ...job,
+          title: translatedTitle,
+          description: translatedDescription,
+        };
+      })
+    );
+
+    setJobs(translatedJobs); // Update jobs with translated data
   };
   return (
     <div className="w-fill bg-white pb-20 ">
@@ -115,9 +133,7 @@ export default function Home(props: HomePageProps) {
             <span className="text-blue-500">Jobs</span>
           </div>
           <div className="flex items-center gap-2">
-          <LanguageSwitcher onTranslate={function (lang: string): void {
-              throw new Error("Function not implemented.");
-            } }/>
+          <LanguageSwitcher onTranslate={handleTranslate} />
           <Search className="w-6 h-6 text-gray-500" />
           </div>
         </div>

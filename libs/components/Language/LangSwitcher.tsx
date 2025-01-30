@@ -6,6 +6,9 @@ const LanguageSwitcher = ({
 }: {
   onTranslate: (lang: string) => void;
 }) => {
+  const handleLanguageChange = (lang: string) => {
+    onTranslate(lang); // Call the onTranslate function with the selected language
+  };
   return (
     <div className="mt-1">
       <DropdownMenu>
@@ -22,7 +25,7 @@ const LanguageSwitcher = ({
           align="start"
           className="z-20 fixed mt-2 -left-32 bg-white shadow-lg rounded-md gap-2 border border-gray-500"
         >
-          <DropdownMenuItem onClick={() => onTranslate('en')}>
+          <DropdownMenuItem onClick={() => handleLanguageChange('en')}>
             <img
               src="/img/flag/langen.png"
               alt="English Flag"
@@ -30,7 +33,7 @@ const LanguageSwitcher = ({
             />
             English
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onTranslate('kr')}>
+          <DropdownMenuItem onClick={() => handleLanguageChange('kr')}>
             <img
               src="/img/flag/langkr.png"
               alt="Korean Flag"
@@ -38,7 +41,7 @@ const LanguageSwitcher = ({
             />
             Korean
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onTranslate('ru')}>
+          <DropdownMenuItem onClick={() => handleLanguageChange('ru')}>
             <img
               src="/img/flag/langru.png"
               alt="Russian Flag"

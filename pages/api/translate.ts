@@ -1,23 +1,16 @@
-// pages/api/translate.ts
-import { NextApiRequest, NextApiResponse } from 'next';
+// utils/translate.ts
+import axios from 'axios';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { text, targetLang } = req.body;
+const translateText = async (text: string, targetLang: string) => {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_TRANSLATE_API_KEY;
+  const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
 
-  // Call the translation service (e.g., Google Translate API)
-  const response = await fetch('https://translation.googleapis.com/language/translate/v2', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer YOUR_GOOGLE_API_KEY`,
-    },
-    body: JSON.stringify({
-      q: text,
-      target: targetLang,
-    }),
+  const response = await axios.post(url, {
+    q: text,
+    target: targetLang,
   });
 
-  const data = await response.json();
-  res.status(200).json({ translatedText: data.data.translations[0].translatedText });
-}
+  return response.data.data.translations[0].translatedText;
+};
 
+export default translateText;
