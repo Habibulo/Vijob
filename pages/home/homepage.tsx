@@ -32,7 +32,7 @@ export default function Home(props: HomePageProps) {
   const { ref, inView } = useInView();
   const [isChecked, setIsChecked] = useState(false);
   const [translatedContent, setTranslatedContent] = useState(props.content);
-	const [targetLang, setTargetLang] = useState('en'); // Default language is English
+	const [targetLang, setTargetLang] = useState('kr'); // Default language is English
   /** LIFECYCLE **/
 
 	useEffect(() => {
